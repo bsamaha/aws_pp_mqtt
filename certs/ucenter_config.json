@@ -1,0 +1,62 @@
+{
+    "MQTT": {
+        "Connectivity": {
+            "Name": "blake_PP_test",
+            "ClientID": "ceb1b492-2b45-4a28-bbcb-1b65fdde9dbf",
+            "Protocol": "MQTT 3.1.1",
+            "ServerURI": "ssl://pp.services.u-blox.com:8883",
+            "ClientCredentials": {
+                "Type": "X.509",
+                "Key": "MIIEowIBAAKCAQEAwCtgiwNoTggLUHb4CEX513uulsoQBhWaaELZ17k7m5qtq6lX5S1AM6JysaiMC27Zu5SPNXuY0al/aYHsDBxkeeex81QZbawFAHL4loJ59RoBsG9cvRZxOlgGNIpkoTAVSekVgU2r04NHSN70h3ZGbNCAgNh41AM+xvwin1o6K/NnqHFmS9hl6vkqrdecbvEjG9r7iUqFfklyL09lJyHeQZOwmLBfcLo3r/I8v7SDfkDt3EKltTsvPXKOzHLwwqKPS+Vy6gM6R1vX5+AwP2zRMc4i7740tb+k3m6UT4L73yRptJ9gFBX/ZZl3WYjZh5Rv1NuIq793pHA/hTb0U+m3BQIDAQABAoIBAAXvUQP6DvaZ+P97LR3US2sEPtgZVXVapXIi3mdzKQwdMs/iYvyI8TqnAbPK6MhRnBfW9rVII+gVvAGeKZQWLGQ3a5+AMWjZry3cXyEG1o1jSDoStmKAlu6eWVK2E3WG7qFhuXBM3cmifEkb2aF1XaduqQlRpimmEAJFNyyEtNc2l4Dsj6p73VAgfQy618G2mCoR0/jFRUdOXX1d2bqKd5yLwmUovxb/utag5pqbU0RY4MoIZObjkGT4GrXBD1G0V/YeFyFVWPu7F9JuKc4XGqGe/YJS9uHjBVsf3PvVwgg4+tfIHRno0ei3xnN1lDRWkLqJvE3EAes4kegaOxOlrQECgYEA4qBtVFDvPm2FxsjdIehW9PL4zQ5j0OKhVDA/zZjvTx/QWl6qSjIVm9B1eVuiv0Et2yjkk0rD6qcDjgI/Mji7bC2eoP0l3jCeANqu+xrpdbhJxw4cQdJWmfalaNbgEe9+7o0w463BER6o78t+1cJtJ8K2AIYYwIOHm3X2cq8OzdkCgYEA2ROk4Ygf0f05D0APKQA71w5SvtjYyUc2LrnVBMldy/fZu0vXAAcj3tz9noU3eWcMWiykBl1At985aks+O6jOpFMjwMvrO5KvOYPVms1g3OaXsbkZMgWSn+IQ/35cWoH8HPR2+Z08Kcg+jDR8Za2Hx2zm8XGATf4w2JdUV2oSew0CgYBJ7bGclsZk5A+G2FGi1QtA3t4g7nfLVZLxRsgZhrFSa3tpb4Y3q/z2llssGqONpnKSEtX14qbkrlTvh3YcKPui/4LG2631vIBeoPgB/DZ6a4LNx6GaK0aK9TXibG4uC6Wppi9zpmPb9NeBWi3nB4TaOp9qrlP2wTGEmkeqA8ddiQKBgQCSYtfmqyhiMHRhH17Z1GmGLgeI4azXlyknu3O2ZaDWIo726j7Tqvz6lmaFluqA+Qfwa3g1Pn+dP3B1iMYv7zdiwxoyMpGwO8vkak4KtYMjlHEpjVw7SlzFaurxkKHw+wUr9YOh8vGWb44WeHKHEs2ko4Ddwx+1+Lux4+Mhi8topQKBgDIpOHJzDa3Iey5Q38M9YS9YV4FnbSvL34AeO4G8JZZn17Lp4h49JVRYJFYpPg5qhAhJw+LSzoJgu0SHC/2hctvlnvbVWOb2yn09DUVzxbuiXCVtTRCoQTGIF1RwooYWp3cMex7+knMcbQuG7DWVuuZ8TVeDGh4dCsMT6QKeSlRp",
+                "Cert": "MIIDWTCCAkGgAwIBAgIUYJFrHZE7DLBZINEDyOOhQGN5NFswDQYJKoZIhvcNAQELBQAwTTFLMEkGA1UECwxCQW1hem9uIFdlYiBTZXJ2aWNlcyBPPUFtYXpvbi5jb20gSW5jLiBMPVNlYXR0bGUgU1Q9V2FzaGluZ3RvbiBDPVVTMB4XDTIzMTAyMzE0MTAzNloXDTQ5MTIzMTIzNTk1OVowHjEcMBoGA1UEAwwTQVdTIElvVCBDZXJ0aWZpY2F0ZTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMArYIsDaE4IC1B2+AhF+dd7rpbKEAYVmmhC2de5O5uaraupV+UtQDOicrGojAtu2buUjzV7mNGpf2mB7AwcZHnnsfNUGW2sBQBy+JaCefUaAbBvXL0WcTpYBjSKZKEwFUnpFYFNq9ODR0je9Id2RmzQgIDYeNQDPsb8Ip9aOivzZ6hxZkvYZer5Kq3XnG7xIxva+4lKhX5Jci9PZSch3kGTsJiwX3C6N6/yPL+0g35A7dxCpbU7Lz1yjsxy8MKij0vlcuoDOkdb1+fgMD9s0THOIu++NLW/pN5ulE+C+98kabSfYBQV/2WZd1mI2YeUb9TbiKu/d6RwP4U29FPptwUCAwEAAaNgMF4wHwYDVR0jBBgwFoAU7Uh9C67yjLb4P95jfHH4IYtw95gwHQYDVR0OBBYEFCcSfAqimanBSjRAC6P46IQX7ma2MAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgeAMA0GCSqGSIb3DQEBCwUAA4IBAQAmhglaIpd5KslLfGLLOxsmmbqXzokwzTIDBOGqxahtWOXjtV9furThQdZL8bKv/mwqvOgmCHZvnVRIutwoIdWHKhU3aDojT4H+HJHa01DLzSIGQ/ribIKLUXHi620GKytGRkuFvyZ7Hf7BchseIq63HvA0w8k+gjvPlWNkXDrEqhEDBTHEVghPelmoD921Wx6o8Ml2qtNTG+JltQjX2dmK0cY9Kk0I1LPG1wT2mBLIzn3aFZf+JP9nfPtIwA6taT4pF3vJH8RPbRX4z1cjekfzLuBhKt1RgKGR8UxXciFbOdF4KYC5hnt2n60uDY8eG0y07jUd4JaDuk4a2nomT3vb",
+                "RootCA": "MIIDQTCCAimgAwIBAgITBmyfz5m/jAo54vB4ikPmljZbyjANBgkqhkiG9w0BAQsFADA5MQswCQYDVQQGEwJVUzEPMA0GA1UEChMGQW1hem9uMRkwFwYDVQQDExBBbWF6b24gUm9vdCBDQSAxMB4XDTE1MDUyNjAwMDAwMFoXDTM4MDExNzAwMDAwMFowOTELMAkGA1UEBhMCVVMxDzANBgNVBAoTBkFtYXpvbjEZMBcGA1UEAxMQQW1hem9uIFJvb3QgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALJ4gHHKeNXjca9HgFB0fW7Y14h29Jlo91ghYPl0hAEvrAIthtOgQ3pOsqTQNroBvo3bSMgHFzZM9O6II8c+6zf1tRn4SWiw3te5djgdYZ6k/oI2peVKVuRF4fn9tBb6dNqcmzU5L/qwIFAGbHrQgLKm+a/sRxmPUDgH3KKHOVj4utWp+UhnMJbulHheb4mjUcAwhmahRWa6VOujw5H5SNz/0egwLX0tdHA114gk957EWW67c4cX8jJGKLhD+rcdqsq08p8kDi1L93FcXmn/6pUCyziKrlA4b9v7LWIbxcceVOF34GfID5yHI9Y/QCB/IIDEgEw+OyQmjgSubJrIqg0CAwEAAaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0OBBYEFIQYzIU07LwMlJQuCFmcx7IQTgoIMA0GCSqGSIb3DQEBCwUAA4IBAQCY8jdaQZChGsV2USggNiMOruYou6r4lK5IpDB/G/wkjUu0yKGX9rbxenDIU5PMCCjjmCXPI6T53iHTfIUJrU6adTrCC2qJeHZERxhlbI1Bjjt/msv0tadQ1wUsN+gDS63pYaACbvXy8MWy7Vu33PqUXHeeE6V/Uq2V8viTO96LXFvKWlJbYK8U90vvo/ufQJVtMVT8QtPHRh8jrdkPSHCa2XV4cdFyQzR1bldZwgJcJmApzyMZFo6IQ6XU5MsI+yMRQ+hDKXJioaldXgjUkK642M4UwtBV8ob2xJNDd2ZhwLnoQdeXeGADbkpyrqXRfboQnoZsG4q5WTP468SQvvG5"
+            },
+            "CleanSession": true,
+            "ConnectionTimeout": 30,
+            "KeepAliveInterval": 3600,
+            "SSL": {
+                "Mode": "BASIC",
+                "Protocol": "TLSv1.2"
+            }
+        },
+        "Subscriptions": {
+            "Key": {
+                "QoS": 1,
+                "KeyTopics": [
+                    "/pp/ubx/0236/Lb"
+                ]
+            },
+            "AssistNow": {
+                "QoS": 1,
+                "AssistNowTopics": [
+                    "/pp/ubx/mga"
+                ]
+            },
+            "Data": {
+                "QoS": 0,
+                "DataTopics": [
+                    "/pp/Lb/eu",
+                    "/pp/Lb/eu/gad;/pp/Lb/eu/hpac;/pp/Lb/eu/ocb;/pp/Lb/eu/clk",
+                    "/pp/Lb/us",
+                    "/pp/Lb/us/gad;/pp/Lb/us/hpac;/pp/Lb/us/ocb;/pp/Lb/us/clk;/pp/frequencies/Lb",
+                    "/pp/Lb/au",
+                    "/pp/Lb/au/gad;/pp/Lb/au/hpac;/pp/Lb/au/ocb;/pp/Lb/au/clk",
+                    "/pp/Lb/jp",
+                    "/pp/Lb/jp/gad;/pp/Lb/jp/hpac;/pp/Lb/jp/ocb;/pp/Lb/jp/clk"
+                ]
+            }
+        },
+        "dynamickeys": {
+            "current": {
+                "start": 1702166382000,
+                "duration": 3110399999,
+                "value": "7875bc2e9cb9252cef9070aef9ecd091"
+            },
+            "next": {
+                "start": 1705276782000,
+                "duration": 2419199999,
+                "value": "3fce6f457544996e2e6292b260b52cd7"
+            }
+        }
+    }
+}

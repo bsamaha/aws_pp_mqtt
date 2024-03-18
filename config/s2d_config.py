@@ -84,7 +84,7 @@ class EnvironmentConfigLoader:
             "RABBITMQ_RETRY_ATTEMPTS": int(os.getenv("RABBITMQ_RETRY_ATTEMPTS", "5")),
             "RABBITMQ_INITIAL_RETRY_DELAY": int(os.getenv("RABBITMQ_INITIAL_RETRY_DELAY", "1")),
             "PP_REGION": os.getenv("PP_REGION", "us"),
-            "PP_PLAN": os.getenv("PP_PLAN", "Lb")
+            "PP_PLAN": os.getenv("PP_PLAN", "Lb"),
         }
 
 class AppConfig(BaseModel):
@@ -119,6 +119,8 @@ class AppConfig(BaseModel):
     alias: str = Field("blake_test_homeserver", alias="ALIAS")
     pp_region: str = Field("US", alias="PP_REGION")
     pp_plan: str = Field("ip", alias="PP_PLAN")
+
+
 
     @classmethod
     def from_env_and_json(cls, env_loader: EnvironmentConfigLoader, json_loader: UcenterJsonConfigLoader) -> "AppConfig":

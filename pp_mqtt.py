@@ -60,7 +60,9 @@ class PointPerfectClient:
     def _on_mqtt_connect(self, client, userdata, flags, rc):
         if rc == 0:
             logger.info("Connected to MQTT server")
+            # Key topic
             self.subscribe(f"/pp/ubx/0236/{self.config.pp_plan}", qos=1)
+            # Assist Now Topic
             self.subscribe("/pp/ubx/mga", qos=1)
             if self.s2s:
                 # Define the regions and child topics

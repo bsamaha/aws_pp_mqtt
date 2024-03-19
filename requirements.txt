@@ -1,7 +1,6 @@
 annotated-types==0.6.0
 awscrt==0.20.5
 awsiotsdk==1.21.1
-paho-mqtt==2.0.0
 pydantic==2.6.4
 pydantic_core==2.16.3
 pynmeagps==1.0.33

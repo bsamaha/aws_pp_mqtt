@@ -84,5 +84,14 @@ def load_config() -> AppConfig:
     cert_finder = CertificateFinder()
     env_loader = EnvironmentConfigLoader(cert_finder)
     env_variables = env_loader.load_env_variables()
-    return AppConfig(**env_variables)
+    config = AppConfig(**env_variables)
+    logger.debug(f"Loaded environment variables: {env_variables}")
 
+    # Set the logging level based on the loaded configuration
+    logging_level = config.logging_level.upper()
+    logging.getLogger().setLevel(logging_level)
+    logger.info(f"Logging level set to {logging_level}")
+
+    return config
+
+    

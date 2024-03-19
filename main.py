@@ -1,48 +1,27 @@
+import asyncio
 import logging
-from config.s2s_config import load_config
-from aws_mqtt import MQTTConnection
-import time
+from src.logger import configure_logging
+from src.config.s2s_config import load_config
+from src.edge_device.device_controller import DeviceController
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# Setup logger for this module
 logger = logging.getLogger(__name__)
 
-if __name__ == '__main__':
+async def main():
+    configure_logging()
     config = load_config()
-    logger.debug(config)
 
-    # Setup MQTT Connection
-    mqtt_connection = MQTTConnection(
-        endpoint=config.target_ep,
-        port=config.mqtt_port,
-        cert_filepath=config.cert_filepath,
-        private_key_filepath=config.private_key_filepath,
-        ca_filepath=config.ca_filepath,
-        thing_name=config.thing_name
-    )
+    controller = DeviceController(config)
+    await controller.start()
 
-    logger.info("Connecting to %s with client ID '%s'...", config.target_ep, config.thing_name)
-    mqtt_connection.connect().result()  # Wait for connection
-    logger.info("Connected!")
-
-    message_topic = "/pp/Lb/us/+"
-
-    subscribe_future = mqtt_connection.subscribe(message_topic, mqtt_connection.on_publish_received, qos=0)
-    subscribe_future.result()  # Wait for subscription to complete
-    logger.info("Subscribed to topic '%s' with QoS 0", message_topic)
-    
     try:
+        # Keep the program running
         while True:
-            time.sleep(1)
+            await asyncio.sleep(1)
     except KeyboardInterrupt:
         logger.info("Keyboard interrupt received, exiting...")
     finally:
-        # Unsubscribing from a topic
-        logger.info("Unsubscribing from topic '%s'", message_topic)
-        unsubscribe_future = mqtt_connection.unsubscribe(message_topic)
-        unsubscribe_future.result()  # Wait for unsubscription
-        logger.info("Unsubscribed from topic '%s'", message_topic)
+        await controller.stop()
 
-        logger.info("Disconnecting...")
-        mqtt_connection.disconnect().result()  # Wait for disconnection
-        logger.info("Disconnected!")
+if __name__ == '__main__':
+    asyncio.run(main())

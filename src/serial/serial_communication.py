@@ -2,6 +2,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 import time
+from typing import Any, Callable
 from pyubx2 import UBXReader, NMEA_PROTOCOL, RTCM3_PROTOCOL, UBX_PROTOCOL
 from serial import SerialException
 import logging
@@ -10,9 +11,9 @@ import asyncio
 import queue
 from serial import Serial
 import json
+from src.interfaces.communication_interface import CommunicationInterface  # Import the interface
 
 logger = logging.getLogger(__name__)
-logger.setLevel(os.getenv("LOG_LEVEL", "INFO"))
 
 # Define the base handler interface
 class MessageHandler(ABC):
@@ -108,12 +109,35 @@ class MessageReader:
 
 class MessageProcessor:
     """
-    Processes GNSS messages using registered handlers.
+    Processes GNSS messages using dynamically registered handlers.
     """
-    handlers = {
-        'GNGGA': GNGGAHandler(),
-        'NAV-PVT': NAVPVTHandler(),
-    }
+    handlers = {}
+
+    @classmethod
+    def register_handler(cls, message_type, handler):
+        """
+        Registers a handler for a specific message type.
+
+        :param message_type: The type of the message the handler can process.
+        :param handler: The handler instance.
+        """
+        if message_type in cls.handlers:
+            logger.warning(f"Handler for {message_type} already registered. Overwriting.")
+        cls.handlers[message_type] = handler
+        logger.info(f"Handler for {message_type} registered successfully.")
+
+    @classmethod
+    def deregister_handler(cls, message_type):
+        """
+        Deregisters the handler for a specific message type.
+
+        :param message_type: The type of the message to deregister the handler for.
+        """
+        if message_type in cls.handlers:
+            del cls.handlers[message_type]
+            logger.info(f"Handler for {message_type} deregistered successfully.")
+        else:
+            logger.warning(f"No handler registered for {message_type}.")
 
     @classmethod
     def process_data(cls, stream, device_id, gnss_messages, experiment_id):
@@ -121,19 +145,19 @@ class MessageProcessor:
         try:
             for parsed_data in message_reader.read_messages(stream, UBX_PROTOCOL | NMEA_PROTOCOL | RTCM3_PROTOCOL):
                 if parsed_data.identity not in gnss_messages:
-                    logger.debug("Message type not in GNSS messages: %s", parsed_data.identity)
+                    logger.debug(f"Message type not in GNSS messages: {parsed_data.identity}")
                     continue
 
                 handler = cls.handlers.get(parsed_data.identity)
                 if not handler:
-                    logger.warning("No handler for message type: %s", parsed_data.identity)
+                    logger.warning(f"No handler for message type: {parsed_data.identity}")
                     continue
 
                 return handler.process(parsed_data, device_id, experiment_id)
         except SerialException as e:
-            logger.error("Error reading data from serial port: %s", e)
+            logger.error(f"Error reading data from serial port: {e}")
         except Exception as e:
-            logger.error("Unexpected error in MessageProcessor: %s", e)
+            logger.error(f"Unexpected error in MessageProcessor: {e}")
         finally:
             if stream.in_waiting:
                 logger.debug("Data still available in stream after processing.")
@@ -141,21 +165,46 @@ class MessageProcessor:
                 logger.debug("No more data available in stream.")
         return None
 
-class SerialCommunication:
-    def __init__(self, port, baudrate, timeout, device_id, experiment_id, gnss_messages,amqp_client=None):
+class SerialCommunication(CommunicationInterface):  # Now explicitly implements CommunicationInterface
+    def __init__(self, port, baudrate, timeout, device_id, experiment_id, gnss_messages, mqtt_client=None):
         self.stream = None
         self.message_queue = queue.Queue()
         self.running = True
         self.device_id = device_id
-        # self.amqp_client = amqp_client
+        self.mqtt_client = mqtt_client
         self._open_connection(port, baudrate, timeout)
         self.gnss_messages = gnss_messages
         self.experiment_id = experiment_id
         self.thread = asyncio.create_task(self.send_messages())
 
-    
+    async def connect(self):
+        if not self.stream or not self.stream.is_open:
+            self._open_connection(self.stream.port, self.stream.baudrate, self.stream.timeout)
+
+    async def disconnect(self):
+        self.running = False
+        if self.stream and self.stream.is_open:
+            self.stream.close()
+            logger.info("Serial port closed.")
+
     def enqueue_message(self, message):
+        # Assuming message is a string that needs to be encoded
         self.message_queue.put(message)
+        logger.info(f"Enqueued message: {message}")
+
+    async def send(self, destination: str, message: Any, **kwargs):
+        # For serial, destination is ignored as it's a point-to-point connection.
+        if isinstance(message, str):
+            message = message.encode('utf-8')  # Convert to bytes
+        self.stream.write(message)
+
+    async def receive(self, source: str, callback: Callable[[str, Any], None], **kwargs):
+        # For serial, source is ignored. This method sets up a listener loop.
+        while self.running:
+            if self.stream.in_waiting > 0:
+                data = self.stream.readline()
+                asyncio.create_task(callback(source, data))
+            await asyncio.sleep(0.01)  # Prevents hogging the CPU
 
     def _open_connection(self, port, baudrate, timeout):
         try:
@@ -174,8 +223,9 @@ class SerialCommunication:
             data_dict = MessageProcessor.process_data(self.stream, self.device_id, self.gnss_messages, self.experiment_id)
             if data_dict:
                 logger.info("Received GNSS message: %s", data_dict)
-                # await self.amqp_client.publish_message(json.dumps(data_dict))
-
+                if self.mqtt_client:
+                    # Convert the message to JSON and publish it
+                    await self.mqtt_client.send(f"/{self.device_id}/data", json.dumps(data_dict), as_json=True)
 
     async def send_messages(self):
         while self.running:
@@ -187,6 +237,11 @@ class SerialCommunication:
                 except SerialException as e:
                     logger.error("Error sending message: %s", e)
             await asyncio.sleep(0.01)
+
+    async def register_message_handlers(self):
+        MessageProcessor.register_handler("GNGGA", GNGGAHandler())
+        MessageProcessor.register_handler("NAV-PVT", NAVPVTHandler())
+        logger.info("GNSS message handlers registered.")
 
     def close(self):
         self.running = False

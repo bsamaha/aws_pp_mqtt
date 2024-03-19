@@ -225,7 +225,7 @@ class SerialCommunication(CommunicationInterface):  # Now explicitly implements 
                 logger.info("Received GNSS message: %s", data_dict)
                 if self.mqtt_client:
                     # Convert the message to JSON and publish it
-                    await self.mqtt_client.send(f"/{self.device_id}/data", json.dumps(data_dict), as_json=True)
+                    await self.mqtt_client.send(f"/{self.device_id}/data", data_dict, as_json=True)
 
     async def send_messages(self):
         while self.running:

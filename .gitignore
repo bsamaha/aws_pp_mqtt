@@ -1,6 +1,7 @@
 certs/
 certs_1/
 
+.cursorignore
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

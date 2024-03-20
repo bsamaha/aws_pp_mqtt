@@ -28,7 +28,7 @@ class GNGGAHandler(MessageHandler):
         # diff_age = getattr(parsed_data, 'diff_age', None)
         data_dict = {
             "message_type": parsed_data.identity,
-            "full_time": datetime.now().isoformat(),  # Simplified for demonstration
+            "full_time": datetime.now(tz=timezone.utc).isoformat(),  # Simplified for demonstration
             "lat": parsed_data.lat,
             "ns": parsed_data.NS,
             "lon": parsed_data.lon,

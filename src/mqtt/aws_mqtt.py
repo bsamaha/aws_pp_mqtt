@@ -11,7 +11,7 @@ from awscrt.mqtt import QoS  # Make sure to import QoS
 logger = logging.getLogger(__name__)
 
 class MQTTConnection(CommunicationInterface):
-    def __init__(self, endpoint, port, cert_filepath, private_key_filepath, ca_filepath, thing_name, event_loop_group=None, client_bootstrap=None):
+    def __init__(self, endpoint, port, cert_filepath, private_key_filepath, ca_filepath, thing_name, pp_region, event_loop_group=None, client_bootstrap=None):
         logger.debug("Initializing MQTTConnection with endpoint: %s, port: %d", endpoint, port)
         self.endpoint = endpoint
         self.mqtt_port = port
@@ -19,6 +19,7 @@ class MQTTConnection(CommunicationInterface):
         self.private_key_filepath = private_key_filepath
         self.ca_filepath = ca_filepath
         self.thing_name = thing_name
+        self.pp_region = pp_region
 
         self.event_loop_group = event_loop_group if event_loop_group else io.EventLoopGroup(1)
         self.client_bootstrap = client_bootstrap if client_bootstrap else io.ClientBootstrap(self.event_loop_group, io.DefaultHostResolver(self.event_loop_group))

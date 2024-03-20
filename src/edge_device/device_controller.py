@@ -14,7 +14,8 @@ class DeviceController:
             cert_filepath=config.cert_filepath,
             private_key_filepath=config.private_key_filepath,
             ca_filepath=config.ca_filepath,
-            thing_name=config.thing_name
+            thing_name=config.thing_name,
+            pp_region=config.pp_region
         )
         self.serial_comm = SerialCommunication(
             port=config.serial_port,
@@ -32,9 +33,10 @@ class DeviceController:
         await self.serial_comm.register_message_handlers()  # Register message handlers
         asyncio.create_task(self.serial_comm.read_and_send_data())
         # Use the receive method instead of directly calling subscribe
+        logger.info(f"Subscribing to PP region {self.config.pp_region}")
         await self.mqtt_connection.receive("/pp/ubx/0236/Lb", self.on_message_received, qos=1)
         await self.mqtt_connection.receive("/pp/ubx/mga", self.on_message_received, qos=1)
-        await self.mqtt_connection.receive("/pp/Lb/us/+", self.on_message_received, qos=0)
+        await self.mqtt_connection.receive(f"/pp/Lb/{self.pp_region}/+", self.on_message_received, qos=0)
 
     def on_message_received(self, topic, payload, **kwargs):
         logger.debug(f"Message received on topic {topic}: {payload}")

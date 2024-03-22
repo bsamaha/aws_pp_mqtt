@@ -33,8 +33,6 @@ class EnvironmentConfigLoader:
 
         # split gnss_messages by commas
         gnss_messages = set(os.getenv("GNSS_MESSAGES", "").split(',')) if os.getenv("GNSS_MESSAGES") else set()
-
-
         env_variables = {
             "TARGET_EP": os.getenv("TARGET_EP", 'a2u4kg7tuli9al-ats.iot.us-east-1.amazonaws.com'),
             "THING_NAME": os.getenv("THING_NAME", 'blake_test_example'),
@@ -50,7 +48,7 @@ class EnvironmentConfigLoader:
             "DEVICE_ID": os.getenv("DEVICE_ID", ""),
             "EXPERIMENT_ID": os.getenv("EXPERIMENT_ID", "1"),
             "ALIAS": os.getenv("ALIAS", "blake_test_homeserver"),
-            "PP_REGION": os.getenv("PP_REGION", "us"),
+            "PP_REGION": os.getenv("PP_REGION", None),
         }
 
         return env_variables

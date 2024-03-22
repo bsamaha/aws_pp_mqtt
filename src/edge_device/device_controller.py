@@ -34,9 +34,10 @@ class DeviceController:
         asyncio.create_task(self.serial_comm.read_and_send_data())
         # Use the receive method instead of directly calling subscribe
         logger.info(f"Subscribing to PP region {self.config.pp_region}")
-        await self.mqtt_connection.receive("/pp/ubx/0236/Lb", self.on_message_received, qos=1)
-        await self.mqtt_connection.receive("/pp/ubx/mga", self.on_message_received, qos=1)
-        await self.mqtt_connection.receive(f"/pp/Lb/{self.mqtt_connection.pp_region}/+", self.on_message_received, qos=0)
+        if self.mqtt_connection.pp_region:
+            await self.mqtt_connection.receive("/pp/ubx/0236/Lb", self.on_message_received, qos=1)
+            await self.mqtt_connection.receive("/pp/ubx/mga", self.on_message_received, qos=1)
+            await self.mqtt_connection.receive(f"/pp/Lb/{self.mqtt_connection.pp_region}/+", self.on_message_received, qos=0)
 
     def on_message_received(self, topic, payload, **kwargs):
         logger.debug(f"Message received on topic {topic}: {payload}")

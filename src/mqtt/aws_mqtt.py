@@ -89,7 +89,7 @@ class IotCoreBrokerConnection:
             )
             # Now, correctly await only the future part of the tuple
             await asyncio.wait_for(asyncio.wrap_future(publish_future), timeout=3)
-            logger.deubg(f"Message successfully published to {destination}. Packet ID: {packet_id}")
+            logger.debug(f"Message successfully published to {destination}. Packet ID: {packet_id}")
         except asyncio.TimeoutError:
             logger.warning(f"Publish to {destination} timed out.")
         except Exception as e:

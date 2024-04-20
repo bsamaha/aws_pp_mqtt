@@ -6,6 +6,14 @@ from typing import Any, Callable, Dict
 
 logger = logging.getLogger(__name__)
 
+from abc import ABC, abstractmethod
+import asyncio
+import json
+import logging
+from typing import Any, Callable, Dict
+
+logger = logging.getLogger(__name__)
+
 class CommunicationInterface(ABC):
     """
     Defines a generic interface for communication mechanisms.
@@ -32,10 +40,6 @@ class CommunicationInterface(ABC):
     async def send(self, destination: str, message: Any, **kwargs):
         """
         Sends a message to the specified destination.
-
-        :param destination: The destination address or topic.
-        :param message: The message to be sent.
-        :param kwargs: Additional parameters specific to the communication medium.
         """
         pass
 
@@ -43,10 +47,6 @@ class CommunicationInterface(ABC):
     async def receive(self, source: str, callback: Callable[[str, Any], None], **kwargs):
         """
         Registers a callback to receive messages from the specified source.
-
-        :param source: The source address or topic to listen on.
-        :param callback: A callback function that is called when a message is received.
-        :param kwargs: Additional parameters specific to the communication medium.
         """
         pass
 
@@ -81,8 +81,6 @@ class SerialCommunication(CommunicationInterface):
         self.serial_port = serial_port
 
     async def connect(self):
-        # Serial connections are typically stateful and remain open,
-        # so this might just ensure the port is open or reopen it if needed.
         if not self.serial_port.is_open:
             self.serial_port.open()
 
@@ -91,9 +89,8 @@ class SerialCommunication(CommunicationInterface):
             self.serial_port.close()
 
     async def send(self, destination: str, message: Any, **kwargs):
-        # For serial, destination is ignored as it's a point-to-point connection.
         if isinstance(message, str):
-            message = message.encode('utf-8')  # Convert to bytes
+            message = message.encode('utf-8')
         self.serial_port.write(message)
 
     async def receive(self, source: str, callback: Callable[[str, Any], None], **kwargs):
@@ -102,4 +99,4 @@ class SerialCommunication(CommunicationInterface):
             if self.serial_port.in_waiting > 0:
                 data = self.serial_port.readline()
                 asyncio.create_task(callback(source, data))
-            await asyncio.sleep(0.01)  # Prevents hogging the CPU
+            await asyncio.sleep(0.01)

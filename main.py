@@ -12,15 +12,15 @@ async def main():
     config = load_config()
 
     controller = DeviceController(config)
-    await controller.start()
-
     try:
+        await controller.start()
         # Keep the program running
         while True:
             await asyncio.sleep(1)
-    except KeyboardInterrupt:
-        logger.info("Keyboard interrupt received, exiting...")
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
     finally:
+        logger.info("Stopping controller and cleaning up resources...")
         await controller.stop()
 
 if __name__ == '__main__':

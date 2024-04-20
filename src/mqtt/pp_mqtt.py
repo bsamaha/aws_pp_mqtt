@@ -1,3 +1,10 @@
+
+"""
+This module is currently unused in the project. This is a relic of the service to device connection.
+
+This module should later be removed for clarity and can be used as a base for the service to service connection.
+"""
+
 import logging
 import paho.mqtt.client as mqtt
 from paho.mqtt.enums import CallbackAPIVersion

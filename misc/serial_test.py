@@ -14,7 +14,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 # Define the serial port settings
-PORT = 'COM5'  # Change this to your serial device's port
+PORT = 'COM10'  # Change this to your serial device's port
 BAUDRATE = 38400
 TIMEOUT = 1  # Timeout in seconds
 

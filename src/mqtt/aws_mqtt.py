@@ -76,22 +76,24 @@ class IotCoreBrokerConnection:
             logger.error(f"Failed to disconnect from MQTT broker: {e}")
             raise
 
+
     async def send(self, destination: str, message: Any, as_json=True, **kwargs):
         if as_json:
             message = json.dumps(message)
         try:
-            publish_future = self.mqtt_connection.publish(
+            # Unpack the tuple to get the future and packet_id
+            publish_future, packet_id = self.mqtt_connection.publish(
                 topic=destination,
                 payload=message,
-                qos=kwargs.get('qos', mqtt.QoS.AT_MOST_ONCE)
+                qos=kwargs.get('qos', mqtt.QoS.AT_LEAST_ONCE)
             )
+            # Now, correctly await only the future part of the tuple
             await asyncio.wait_for(asyncio.wrap_future(publish_future), timeout=3)
-            logger.info(f"Message successfully published to {destination}.")
+            logger.deubg(f"Message successfully published to {destination}. Packet ID: {packet_id}")
         except asyncio.TimeoutError:
             logger.warning(f"Publish to {destination} timed out.")
         except Exception as e:
             logger.error(f"Error publishing to {destination}: {e}")
-
 
     async def receive(self, topic, **kwargs):
         qos = kwargs.get('qos', 0)

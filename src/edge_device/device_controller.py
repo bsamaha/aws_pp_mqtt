@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import json
 from src.mqtt.aws_mqtt import IotCoreBrokerConnection
 from src.serial.serial_communication import SerialCommunication
 
@@ -112,8 +111,9 @@ class DeviceController:
             await self.serial_comm.disconnect()
 
     async def on_gnss_data_received(self, data):
-        topic = f"/{self.config.device_id}/data"
-        logger.info(f"Received serial data: {data} ready to send to mqtt broker")
+        topic = f"dt/{self.config.ts_domain_name}/{self.config.device_id}/hpg/{data['message_type']}"
+        logger.info(f"sending gnss data to {topic}")
+        logger.debug(f"Received serial data: {data} ready to send to mqtt broker")
         await self.mqtt_comm.send(topic, data)
 
     async def on_mqtt_data_received(self, topic, payload):
@@ -138,11 +138,3 @@ class DeviceController:
         await self.mqtt_comm.disconnect()
         await self.serial_comm.disconnect()
         self.serial_task = None  # Set serial_task to None after cleanup
-
-    def handle_task_exception(self, task):
-            try:
-                task.result()  # This will re-raise any exception caught in the task.
-            except Exception as e:
-                logger.error(f"Error in serial communication task: {e}")
-                # Handle the error or restart the task as needed
-

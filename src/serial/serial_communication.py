@@ -2,13 +2,11 @@
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 import time
-from typing import Any, Callable
+from typing import Any
 from pyubx2 import UBXReader, NMEA_PROTOCOL, RTCM3_PROTOCOL, UBX_PROTOCOL
 from serial import SerialException
 import logging
-import os
 import asyncio
-import queue
 from serial import Serial
 from src.interfaces.communication_interface import CommunicationInterface
 

@@ -49,6 +49,7 @@ class EnvironmentConfigLoader:
             "EXPERIMENT_ID": os.getenv("EXPERIMENT_ID", "1"),
             "ALIAS": os.getenv("ALIAS", "blake_test_homeserver"),
             "PP_REGION": os.getenv("PP_REGION", None),
+            "TS_DOMAIN_NAME": os.getenv("TS_DOMAIN_NAME", "solutions_team")
         }
 
         return env_variables
@@ -69,6 +70,7 @@ class AppConfig(BaseModel):
     experiment_id: str = Field("1", alias="EXPERIMENT_ID")
     alias: str = Field("blake_test_homeserver", alias="ALIAS")
     pp_region: str = Field("US", alias="PP_REGION")
+    ts_domain_name: str = Field("solutions_team", alias="TS_DOMAIN_NAME")
 
     @classmethod
     def from_env(cls) -> "AppConfig":

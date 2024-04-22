@@ -2,8 +2,7 @@
 This module is used to connect to the AWS Iot Core broker using the awsiot SDK.
 """
 
-from typing import Any, Callable
-from src.interfaces.communication_interface import MQTTCommunication
+from typing import Any
 import logging
 from awscrt import io, mqtt
 from awsiot import mqtt_connection_builder

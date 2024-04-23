@@ -111,10 +111,11 @@ class DeviceController:
             await self.serial_comm.disconnect()
 
     async def on_gnss_data_received(self, data):
-        topic = f"dt/{self.config.ts_domain_name}/{self.config.device_id}/hpg/{data['message_type']}"
-        logger.info(f"sending gnss data to {topic}")
+        # topic = f"dt/{self.config.ts_domain_name}/{self.config.device_id}/hpg/{data['message_type']}"
+        aws_basic_ingest_rule_for_gnss_data = f"$aws/rules/gnss_basic_ingest"
+        logger.debug(f"sending gnss data to {aws_basic_ingest_rule_for_gnss_data}")
         logger.debug(f"Received serial data: {data} ready to send to mqtt broker")
-        await self.mqtt_comm.send(topic, data)
+        await self.mqtt_comm.send(aws_basic_ingest_rule_for_gnss_data, data)
 
     async def on_mqtt_data_received(self, topic, payload):
         if topic in ["/pp/ubx/0236/Lb", "/pp/ubx/mga"] or topic.startswith(f"/pp/Lb/{self.config.pp_region}/"):

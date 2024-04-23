@@ -234,11 +234,11 @@ class SerialCommunication(CommunicationInterface):
     def enqueue_message(self, message):
         # Assuming message is a string that needs to be encoded
         self.to_receiver_message_queue.put(message)
-        logger.info(f"Enqueued message: {message}")
+        logger.debug(f"Enqueued message: {message}")
 
     def handle_pp_correction_message(self, data):
         """Process pp_correction_message event from event bus."""
-        logger.info("Enqueuing PP correction message for sending: %s", data)
+        logger.debug("Enqueuing PP correction message for sending: %s", data)
         # Ensure the message is in the correct format (bytes) before enqueuing
         if isinstance(data, str):
             data = data.encode('utf-8')

@@ -3,8 +3,9 @@ import logging
 from src.logger import configure_logging
 from src.config.s2s_config import load_config
 from src.edge_device.device_controller import DeviceController
+from src.logger import configure_logging
 
-# Setup logger for this module
+configure_logging()
 logger = logging.getLogger(__name__)
 
 async def main():

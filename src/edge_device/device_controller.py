@@ -4,7 +4,9 @@ import logging
 from src.communication.serial.serial_communication import SerialCommunication
 from src.communication.mqtt.aws_mqtt import IotCoreBrokerConnection
 from src.edge_device.event_bus import EventBus
+from src.logger import configure_logging
 
+configure_logging()
 logger = logging.getLogger(__name__)
 
 class DeviceController:

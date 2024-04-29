@@ -3,7 +3,9 @@ import asyncio
 import json
 import logging
 from typing import Any, Callable
+from src.logger import configure_logging
 
+configure_logging()
 logger = logging.getLogger(__name__)
 
 class CommunicationInterface(ABC):

@@ -9,7 +9,6 @@ from awsiot import mqtt_connection_builder
 import json
 import asyncio
 from awscrt.mqtt import QoS
-
 from src.logger import configure_logging
 
 configure_logging()

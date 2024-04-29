@@ -1,6 +1,8 @@
 import logging
 from pyubx2 import UBXReader
+from src.logger import configure_logging
 
+configure_logging()
 logger = logging.getLogger(__name__)
 
 class MessageReader:

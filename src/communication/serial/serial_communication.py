@@ -8,8 +8,9 @@ from src.interfaces.communication_interface import CommunicationInterface
 from src.communication.serial.message_processor import MessageProcessor
 from src.communication.serial.message_reader import MessageReader
 from pyubx2 import UBX_PROTOCOL, NMEA_PROTOCOL, RTCM3_PROTOCOL
+from src.logger import configure_logging
 
-
+configure_logging()
 logger = logging.getLogger(__name__)
 
 class SerialCommunication(CommunicationInterface):

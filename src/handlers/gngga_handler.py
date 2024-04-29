@@ -1,7 +1,12 @@
 from datetime import datetime, timezone
+import logging
 import time
 from src.handlers.message_handler import MessageHandler
-# Implement a handler for GNGGA messages
+from src.logger import configure_logging
+
+configure_logging()
+logger = logging.getLogger(__name__)
+
 class GNGGAHandler(MessageHandler):
     def process(self, parsed_data, device_id, experiment_id):
 

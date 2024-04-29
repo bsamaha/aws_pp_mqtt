@@ -2,7 +2,9 @@ import logging
 from serial import SerialException
 from pyubx2 import UBX_PROTOCOL, NMEA_PROTOCOL, RTCM3_PROTOCOL
 from src.communication.serial.message_reader import MessageReader
+from src.logger import configure_logging
 
+configure_logging()
 logger = logging.getLogger(__name__)
 
 class MessageProcessor:

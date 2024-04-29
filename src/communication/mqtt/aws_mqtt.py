@@ -14,7 +14,7 @@ from src.logger import configure_logging
 configure_logging()
 logger = logging.getLogger(__name__)
 
-class IotCoreBrokerConnection:
+class IoTCoreClient:
     def __init__(self, endpoint, port, cert_filepath, private_key_filepath, ca_filepath, thing_name, pp_region, event_loop, event_bus):
         logger.debug("Initializing MQTTConnection with endpoint: %s, port: %d", endpoint, port)
         self.endpoint = endpoint
@@ -26,12 +26,11 @@ class IotCoreBrokerConnection:
         self.pp_region = pp_region
         self._is_connected = False
         self.event_loop = event_loop
-        self.event_bus = event_bus  # Add event_bus to the constructor
+        self.event_bus = event_bus
 
         self._initialize_connection_components()
         self.mqtt_connection = self._build_connection()
         logger.info("MQTTConnection instance created.")
-
 
     def _build_connection(self):
         logger.info("Building MQTT connection with provided credentials.")

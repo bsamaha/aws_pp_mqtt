@@ -2,7 +2,7 @@
 import asyncio
 import logging
 from src.communication.serial.serial_communication import SerialCommunication
-from src.communication.mqtt.aws_mqtt import IotCoreBrokerConnection
+from src.communication.mqtt.aws_mqtt import IoTCoreClient
 from src.edge_device.event_bus import EventBus
 from src.logger import configure_logging
 
@@ -13,7 +13,7 @@ class DeviceController:
     def __init__(self, config):
         self.config = config
         self.event_bus = EventBus()
-        self.mqtt_comm = IotCoreBrokerConnection(
+        self.mqtt_comm = IoTCoreClient(
             endpoint=config.target_ep,
             port=config.mqtt_port,
             cert_filepath=config.cert_filepath,
@@ -33,8 +33,6 @@ class DeviceController:
             gnss_messages=config.gnss_messages,
             event_bus=self.event_bus  # Pass the event bus here
         )
-
-        self.serial_task = None  # Initialize serial_task to None
 
         # Subscribe to events
         self.event_bus.subscribe("gnss_data", self.on_gnss_data_received)
@@ -89,12 +87,14 @@ class DeviceController:
             await self.serial_comm.disconnect()
 
     async def on_gnss_data_received(self, data):
-        # TODO edit this code so that is publishes to the message type specific topic
-        # $aws/rules/gnss_data_basic_ingest/{data['message_identity']}/self.
-        aws_basic_ingest_rule_for_gnss_data = f"$aws/rules/gngga_basic_ingest/{self.config.ts_domain_name}/{self.config.device_id}"
-        logger.debug(f"sending gnss data to {aws_basic_ingest_rule_for_gnss_data}")
-        logger.debug(f"Received serial data: {data} ready to send to mqtt broker")
-        await self.mqtt_comm.send(aws_basic_ingest_rule_for_gnss_data, data)
+        message_type = data.get('message_type')
+        if message_type:
+            aws_basic_ingest_rule_for_gnss_data = f"$aws/rules/gnss_data_basic_ingest/{self.config.ts_domain_name}/{self.config.device_id}/{message_type}"
+            logger.debug(f"sending gnss data to {aws_basic_ingest_rule_for_gnss_data}")
+            logger.debug(f"Received serial data: {data} ready to send to mqtt broker")
+            await self.mqtt_comm.send(aws_basic_ingest_rule_for_gnss_data, data)
+        else:
+            logger.warning(f"Received GNSS data without message_identity: {data}")
 
     async def on_mqtt_data_received(self, topic, payload):
         if topic in ["/pp/ubx/0236/Lb", "/pp/ubx/mga"] or topic.startswith(f"/pp/Lb/{self.config.pp_region}/"):
@@ -105,16 +105,9 @@ class DeviceController:
 
     async def stop(self):
         logger.info("Cleaning up connections...")
-        if self.serial_task and not self.serial_task.done():
-            self.serial_task.cancel()
-            try:
-                await self.serial_task  # Wait for the task to be cancelled
-            except asyncio.CancelledError:
-                pass  # Task cancellation is expected on shutdown
         try:
             await self.mqtt_comm.unsubscribe("/pp/Lb/us/+")
         except asyncio.CancelledError:
             pass  # Handle task cancellation during unsubscribe
         await self.mqtt_comm.disconnect()
         await self.serial_comm.disconnect()
-        self.serial_task = None  # Set serial_task to None after cleanup

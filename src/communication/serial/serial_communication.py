@@ -1,8 +1,8 @@
 import asyncio
 import logging
 from typing import Any
-from handlers.gngga_handler import GNGGAHandler
-from handlers.navpvt_handler import NAVPVTHandler
+from src.handlers.gngga_handler import GNGGAHandler
+from src.handlers.navpvt_handler import NAVPVTHandler
 from serial import Serial, SerialException
 from src.interfaces.communication_interface import CommunicationInterface
 from src.communication.serial.message_processor import MessageProcessor

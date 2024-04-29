@@ -1,8 +1,8 @@
 # device_controller.py
 import asyncio
 import logging
-from src.mqtt.aws_mqtt import IotCoreBrokerConnection
-from src.serial.serial_communication import SerialCommunication
+from src.communication.serial.serial_communication import SerialCommunication
+from src.communication.mqtt.aws_mqtt import IotCoreBrokerConnection
 from src.edge_device.event_bus import EventBus
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,6 @@ class DeviceController:
         )
 
         self.serial_task = None  # Initialize serial_task to None
-
 
         # Subscribe to events
         self.event_bus.subscribe("gnss_data", self.on_gnss_data_received)

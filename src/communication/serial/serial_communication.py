@@ -1,10 +1,10 @@
 import asyncio
 import logging
 from typing import Any
-from src.handlers.gngga_handler import GNGGAHandler
-from src.handlers.navpvt_handler import NAVPVTHandler
+from src.communication.handlers.gngga_handler import GNGGAHandler
+from src.communication.handlers.navpvt_handler import NAVPVTHandler
 from serial import Serial, SerialException
-from src.interfaces.communication_interface import CommunicationInterface
+from src.communication.interfaces.communication_interface import CommunicationInterface
 from src.communication.serial.message_processor import HandlerRegistry, MessageProcessor
 from src.communication.serial.message_reader import MessageReader
 from pyubx2 import UBX_PROTOCOL, NMEA_PROTOCOL, RTCM3_PROTOCOL

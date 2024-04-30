@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 import logging
-from src.handlers.message_handler import MessageHandler
+from src.communication.handlers.message_handler import MessageHandler
 from src.logger import configure_logging
 
 configure_logging()

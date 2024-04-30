@@ -49,6 +49,7 @@ class EnvironmentConfigLoader:
             "EXPERIMENT_ID": os.getenv("EXPERIMENT_ID", "1"),
             "ALIAS": os.getenv("ALIAS", "blake_test_homeserver"),
             "PP_REGION": os.getenv("PP_REGION", None),
+            "TS_DOMAIN_NAME": os.getenv("TS_DOMAIN_NAME", "solutions_team")
         }
 
         return env_variables
@@ -69,6 +70,7 @@ class AppConfig(BaseModel):
     experiment_id: str = Field("1", alias="EXPERIMENT_ID")
     alias: str = Field("blake_test_homeserver", alias="ALIAS")
     pp_region: str = Field("US", alias="PP_REGION")
+    ts_domain_name: str = Field("solutions_team", alias="TS_DOMAIN_NAME")
 
     @classmethod
     def from_env(cls) -> "AppConfig":
@@ -77,6 +79,27 @@ class AppConfig(BaseModel):
         if gnss_messages_env:
             env_variables["GNSS_MESSAGES"] = set(gnss_messages_env.split(","))
         return cls(**env_variables)
+    
+    def mqtt_config(self) -> dict:
+        return {
+            "endpoint": self.target_ep,
+            "port": self.mqtt_port,
+            "cert_filepath": self.cert_filepath,
+            "private_key_filepath": self.private_key_filepath,
+            "ca_filepath": self.ca_filepath,
+            "thing_name": self.thing_name,
+            "pp_region": self.pp_region
+        }
+    
+    def serial_config(self) -> dict:
+        return {
+            "port": self.serial_port,
+            "baudrate": self.baudrate,
+            "timeout": self.timeout,
+            "device_id": self.device_id,
+            "experiment_id": self.experiment_id,
+            "gnss_messages": self.gnss_messages
+        }
 
 def load_config() -> AppConfig:
     cert_finder = CertificateFinder()

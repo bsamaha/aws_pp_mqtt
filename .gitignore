@@ -161,3 +161,8 @@ cython_debug/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+ignore/
+misc/
+
+.cursorignore

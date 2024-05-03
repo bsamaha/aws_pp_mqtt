@@ -14,7 +14,7 @@ configure_logging()
 logger = logging.getLogger(__name__)
 
 class SerialCommunication(CommunicationInterface):
-    def __init__(self, port, baudrate, timeout, device_id, experiment_id, gnss_messages, event_bus):
+    def __init__(self, port, baudrate, timeout, device_id, experiment_id, gnss_messages, event_bus, publish_raw_data):
         self.stream = None
         self.to_receiver_message_queue = asyncio.Queue()
         self.processing_queue = asyncio.Queue()
@@ -30,6 +30,9 @@ class SerialCommunication(CommunicationInterface):
         self.message_reader = MessageReader()
         self.handler_registry = HandlerRegistry()
         self.message_processor = MessageProcessor(self.message_reader, self.handler_registry)
+        self.publish_raw_data = publish_raw_data
+        self.message_buffer = []
+        self.buffer_size_limit = 100  # You can adjust this size based on your needs
        
 
         # Subscribe to pp_correction_message event
@@ -41,19 +44,25 @@ class SerialCommunication(CommunicationInterface):
 
     async def receive(self):
         while self.running:
-            try:
-                # Use MessageReader instance to read messages from the stream
-                for parsed_data in self.message_reader.read_messages(stream=self.stream, protfilter=UBX_PROTOCOL | NMEA_PROTOCOL | RTCM3_PROTOCOL):
-                    if parsed_data is not None:
-                        await self.processing_queue.put(parsed_data)
-                    else:
-                        break  # No more data available
-            except asyncio.CancelledError:
-                logger.info("Receive task was cancelled")
-                break
-            except Exception as e:
-                logger.error(f"Error in receiving data: {e}")
-            await asyncio.sleep(0.001)  # Short sleep to yield control
+            if self.publish_raw_data:
+                try:
+                    # TODO add parsed_data functionality back
+                    for raw_data, parsed_data in self.message_reader.read_messages(stream=self.stream, protfilter=UBX_PROTOCOL | NMEA_PROTOCOL | RTCM3_PROTOCOL, publish_raw_data=self.publish_raw_data):
+                        if raw_data and parsed_data is None:
+                            break  # Exit the loop if no data is available
+
+                        logger.info("RAW DATA: %s", raw_data)
+                        if raw_data.startswith(b'$'):
+                            self.message_buffer.append(raw_data)
+                        if len(self.message_buffer) >= self.buffer_size_limit:
+                            await self.send_batch()
+                except asyncio.CancelledError:
+                    logger.info("Receive task was cancelled")
+                    break
+                except Exception as e:
+                    logger.error(f"Error in receiving data: {e}")
+                await asyncio.sleep(0.001)  # Short sleep to yield control
+
 
 
     async def process_messages(self):
@@ -71,6 +80,8 @@ class SerialCommunication(CommunicationInterface):
         logger.info("Registering message handlers...")
         self.handler_registry.register_handler("GNGGA", GNGGAHandler())
         self.handler_registry.register_handler("NAV-PVT", NAVPVTHandler())
+        if self.publish_raw_data:
+            logger.warning("Publishing raw data is enabled. This may impact performance.")
         logger.info("GNSS message handlers registered.")
 
 
@@ -128,6 +139,15 @@ class SerialCommunication(CommunicationInterface):
                     logger.info("Send messages task was cancelled")
                     break  # Exit the loop if the task is cancelled
             await asyncio.sleep(0.01)
+
+    async def send_batch(self):
+        # Here you would implement the actual sending logic, which might depend on your system's architecture
+        # For example, you might publish it to an event bus or send it over a network
+        logger.info("Sending batch of messages")
+        batch_data = b''.join(self.message_buffer)  # Join all messages into a single batch
+        await self.event_bus.publish("batch_data_raw_gnss_measurements", batch_data)
+        self.message_buffer.clear()  # Clear the buffer after sending
+
 
 
     def close(self):

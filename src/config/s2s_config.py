@@ -49,7 +49,8 @@ class EnvironmentConfigLoader:
             "EXPERIMENT_ID": os.getenv("EXPERIMENT_ID", "1"),
             "ALIAS": os.getenv("ALIAS", "blake_test_homeserver"),
             "PP_REGION": os.getenv("PP_REGION", None),
-            "TS_DOMAIN_NAME": os.getenv("TS_DOMAIN_NAME", "solutions_team")
+            "TS_DOMAIN_NAME": os.getenv("TS_DOMAIN_NAME", "solutions_team"),
+            "PUBLISH_RAW_DATA": os.getenv("PUBLISH_RAW_DATA", False)
         }
 
         return env_variables
@@ -71,6 +72,7 @@ class AppConfig(BaseModel):
     alias: str = Field("blake_test_homeserver", alias="ALIAS")
     pp_region: str = Field("US", alias="PP_REGION")
     ts_domain_name: str = Field("solutions_team", alias="TS_DOMAIN_NAME")
+    publish_raw_data: bool = Field(False, alias="PUBLISH_RAW_DATA")
 
     @classmethod
     def from_env(cls) -> "AppConfig":
@@ -98,7 +100,8 @@ class AppConfig(BaseModel):
             "timeout": self.timeout,
             "device_id": self.device_id,
             "experiment_id": self.experiment_id,
-            "gnss_messages": self.gnss_messages
+            "gnss_messages": self.gnss_messages,
+            "publish_raw_data": self.publish_raw_data
         }
 
 def load_config() -> AppConfig:

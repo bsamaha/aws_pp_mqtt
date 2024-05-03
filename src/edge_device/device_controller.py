@@ -22,6 +22,7 @@ class DeviceController:
         self.event_bus.subscribe("gnss_data", self.on_gnss_data_received)
         self.event_bus.subscribe("mqtt_data_received", self.on_mqtt_data_received)
         self.event_bus.subscribe("pp_correction_message", self.serial_comm.handle_pp_correction_message)
+        self.event_bus.subscribe("batch_data_raw_gnss_measurements", self.on_batch_data_raw_gnss_measurements)
 
     async def start(self):
         logger.info("Connecting to MQTT and setting up Serial...")
@@ -63,6 +64,18 @@ class DeviceController:
             await self.mqtt_comm.send(rule, data)
         else:
             logger.warning("Received GNSS data without message_identity")
+
+    async def on_batch_data_raw_gnss_measurements(self, data):
+        logger.info("Received batch data of raw GNSS measurements")
+        # Define the path to the log file
+        log_file_path = 'raw_gnss_measurements.log'
+        
+        # Open the file in append mode, which will create the file if it doesn't exist
+        with open(log_file_path, 'a') as file:
+            file.write(data.decode('utf-8'))  # Assuming data is bytes, decode and append a newline
+        
+        logger.info(f"Appended batch data to {log_file_path}")
+
 
     async def on_mqtt_data_received(self, topic, payload):
         if topic.startswith("/pp/"):

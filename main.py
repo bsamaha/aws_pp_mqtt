@@ -38,7 +38,8 @@ async def main():
         device_id=serial_config["device_id"],
         experiment_id=serial_config["experiment_id"],
         gnss_messages=serial_config["gnss_messages"],
-        event_bus=event_bus
+        event_bus=event_bus,
+        publish_raw_data=serial_config["publish_raw_data"]
     )
 
     # Create the device controller with all dependencies

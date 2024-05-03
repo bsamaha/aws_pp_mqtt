@@ -19,18 +19,23 @@ class HandlerRegistry:
     def __init__(self):
         self.handlers = {}
 
+    def _log_handler_action(self, message_type, action, is_warning=False):
+        log_message = f"Handler for {message_type} {action} successfully."
+        if is_warning:
+            logger.warning(log_message)
+        else:
+            logger.info(log_message)
+
     def register_handler(self, message_type, handler):
-        if message_type in self.handlers:
-            logger.warning(f"Handler for {message_type} already registered. Overwriting.")
+        action = "already registered. Overwriting" if message_type in self.handlers else "registered"
         self.handlers[message_type] = handler
-        logger.info(f"Handler for {message_type} registered successfully.")
+        self._log_handler_action(message_type, action, is_warning=message_type in self.handlers)
 
     def deregister_handler(self, message_type):
-        if message_type in self.handlers:
-            del self.handlers[message_type]
-            logger.info(f"Handler for {message_type} deregistered successfully.")
+        if self.handlers.pop(message_type, None):
+            self._log_handler_action(message_type, "deregistered")
         else:
-            logger.warning(f"No handler registered for {message_type}.")
+            self._log_handler_action(message_type, "not registered", is_warning=True)
 
     def get_handler(self, message_type):
         return self.handlers.get(message_type)

@@ -67,14 +67,10 @@ class DeviceController:
 
     async def on_batch_data_raw_gnss_measurements(self, data):
         logger.info("Received batch data of raw GNSS measurements")
-        # Define the path to the log file
-        log_file_path = 'raw_gnss_measurements.log'
-        
-        # Open the file in append mode, which will create the file if it doesn't exist
-        with open(log_file_path, 'a') as file:
-            file.write(data.decode('utf-8'))  # Assuming data is bytes, decode and append a newline
-        
-        logger.info(f"Appended batch data to {log_file_path}")
+        rule = f"$aws/rules/raw_data_rule/{self.config.ts_domain_name}/{self.config.device_id}/raw_data"
+        logger.info(f"sending gnss data to {rule}, this is the data {data}")
+        await self.mqtt_comm.send(rule, data, format="json")
+
 
 
     async def on_mqtt_data_received(self, topic, payload):

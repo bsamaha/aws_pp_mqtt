@@ -145,7 +145,12 @@ class SerialCommunication(CommunicationInterface):
         # For example, you might publish it to an event bus or send it over a network
         logger.info("Sending batch of messages")
         batch_data = b''.join(self.message_buffer)  # Join all messages into a single batch
-        await self.event_bus.publish("batch_data_raw_gnss_measurements", batch_data)
+        batched_message = {
+            "device_id": self.device_id,
+            "experiment_id": self.experiment_id,
+            "raw_data": str(batch_data)
+        }
+        await self.event_bus.publish("batch_data_raw_gnss_measurements", batched_message)
         self.message_buffer.clear()  # Clear the buffer after sending
 
 

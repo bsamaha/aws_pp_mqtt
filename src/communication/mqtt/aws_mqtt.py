@@ -74,17 +74,21 @@ class IoTCoreClient:
             raise
 
 
-    async def send(self, destination: str, message: Any, as_json=True, **kwargs):
-        if as_json:
-            message = json.dumps(message)
+    async def send(self, destination: str, message: Any, format="json", **kwargs):
+        format_functions = {
+            "json": json.dumps,
+            "binary": bytes
+        }
+
+        if format in format_functions:
+            message = format_functions[format](message)
+
         try:
-            # Unpack the tuple to get the future and packet_id
             publish_future, packet_id = self.mqtt_connection.publish(
                 topic=destination,
                 payload=message,
                 qos=kwargs.get('qos', mqtt.QoS.AT_LEAST_ONCE)
             )
-            # Now, correctly await only the future part of the tuple
             await asyncio.wait_for(asyncio.wrap_future(publish_future), timeout=3)
             logger.debug(f"Message successfully published to {destination}. Packet ID: {packet_id}")
         except asyncio.TimeoutError:

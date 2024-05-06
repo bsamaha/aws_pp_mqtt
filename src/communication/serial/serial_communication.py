@@ -46,16 +46,16 @@ class SerialCommunication(CommunicationInterface):
         while self.running:
             if self.publish_raw_data:
                 try:
-                    # TODO add parsed_data functionality back
-                    for raw_data, parsed_data in self.message_reader.read_messages(stream=self.stream, protfilter=UBX_PROTOCOL | NMEA_PROTOCOL | RTCM3_PROTOCOL, publish_raw_data=self.publish_raw_data):
+                    # message reader ingests messages from serial stream
+                    for raw_data, parsed_data in self.message_reader.read_messages(stream=self.stream, protfilter=UBX_PROTOCOL | NMEA_PROTOCOL | RTCM3_PROTOCOL):
                         if raw_data and parsed_data is None:
                             break  # Exit the loop if no data is available
-
-                        logger.info("RAW DATA: %s", raw_data)
-                        if raw_data.startswith(b'$'):
-                            self.message_buffer.append(raw_data)
-                        if len(self.message_buffer) >= self.buffer_size_limit:
-                            await self.send_batch()
+                        await self.processing_queue.put(parsed_data)
+                        if self.publish_raw_data:
+                            if raw_data.startswith(b'$'):
+                                self.message_buffer.append(raw_data)
+                            if len(self.message_buffer) >= self.buffer_size_limit:
+                                await self.send_batch()
                 except asyncio.CancelledError:
                     logger.info("Receive task was cancelled")
                     break
@@ -70,10 +70,9 @@ class SerialCommunication(CommunicationInterface):
             parsed_data = await self.processing_queue.get()
             logger.debug(f"parsed_data from serial stream: {parsed_data}")
             
-            processed_data = self.message_processor.process_data(parsed_data, self.device_id, self.gnss_messages, self.experiment_id)
-            if processed_data:
+            if processed_data := self.message_processor.process_data(parsed_data, self.device_id, self.gnss_messages, self.experiment_id):
                 logger.info("Processed GNSS message: %s", processed_data)
-                await self.event_bus.publish(f"gnss_data", processed_data)
+                await self.event_bus.publish("gnss_data", processed_data)
             self.processing_queue.task_done()
 
     async def register_message_handlers(self):

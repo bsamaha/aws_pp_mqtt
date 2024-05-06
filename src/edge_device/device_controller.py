@@ -60,15 +60,14 @@ class DeviceController:
         message_type = data.get('message_type').lower().replace("_", "").replace("-", "")
         if message_type:
             rule = f"$aws/rules/{message_type}_data_basic_ingest/{self.config.ts_domain_name}/{self.config.device_id}/{message_type}"
-            logger.info(f"sending gnss data to {rule}")
+            logger.debug(f"sending gnss data to {rule}")
             await self.mqtt_comm.send(rule, data)
         else:
             logger.warning("Received GNSS data without message_identity")
 
     async def on_batch_data_raw_gnss_measurements(self, data):
-        logger.info("Received batch data of raw GNSS measurements")
         rule = f"$aws/rules/raw_data_rule/{self.config.ts_domain_name}/{self.config.device_id}/raw_data"
-        logger.info(f"sending gnss data to {rule}, this is the data {data}")
+        logger.debug(f"sending batch raw gnss data to {rule}")
         await self.mqtt_comm.send(rule, data, format="json")
 
 

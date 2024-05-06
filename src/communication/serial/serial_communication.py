@@ -142,8 +142,9 @@ class SerialCommunication(CommunicationInterface):
     async def send_batch(self):
         # Here you would implement the actual sending logic, which might depend on your system's architecture
         # For example, you might publish it to an event bus or send it over a network
-        logger.info("Sending batch of messages")
         batch_data = b''.join(self.message_buffer)  # Join all messages into a single batch
+        logger.info("Sending batch of %s messages to event bus", len(self.message_buffer))
+
         batched_message = {
             "device_id": self.device_id,
             "experiment_id": self.experiment_id,

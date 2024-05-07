@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class GNGGAHandler(MessageHandler):
     def process(self, parsed_data, device_id, experiment_id):
 
-        data_dict = {
+       return {
             "message_type": parsed_data.identity,
             "full_time": datetime.now(tz=timezone.utc).isoformat(),  
             "lat": parsed_data.lat,
@@ -30,5 +30,4 @@ class GNGGAHandler(MessageHandler):
             "device_id": device_id,
             "experiment_id": experiment_id
         }
-        return data_dict
     

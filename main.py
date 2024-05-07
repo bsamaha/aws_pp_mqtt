@@ -4,7 +4,7 @@ from src.logger import configure_logging
 from src.config.s2s_config import load_config
 from src.edge_device.device_controller import DeviceController
 from src.communication.mqtt.aws_mqtt import IoTCoreClient
-from src.communication.serial.serial_communication import SerialCommunication  # Assuming SerialCommunication implements CommunicationInterface
+from src.communication.serial.serial_communication import SerialCommunication 
 from src.edge_device.event_bus import EventBus
 
 configure_logging()

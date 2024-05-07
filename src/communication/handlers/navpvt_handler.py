@@ -12,7 +12,7 @@ class NAVPVTHandler(MessageHandler):
 
         full_time = datetime.now(tz=timezone.utc).isoformat() 
         logger.debug(parsed_data)
-        data_dict = {
+        return {
             "message_type": "NAV-PVT",
             "full_time": full_time,
             "year": parsed_data.year,
@@ -44,4 +44,3 @@ class NAVPVTHandler(MessageHandler):
             "device_id": device_id,
             "experiment_id": experiment_id
         }
-        return data_dict

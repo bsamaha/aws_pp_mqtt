@@ -10,9 +10,8 @@ def validate_log_level(level):
     normalized_level = level.upper()
     if normalized_level in valid_levels:
         return normalized_level
-    else:
-        logging.warning(f"Invalid LOG_LEVEL '{level}'. Defaulting to 'INFO'.")
-        return 'INFO'
+    logging.warning(f"Invalid LOG_LEVEL '{level}'. Defaulting to 'INFO'.")
+    return 'INFO'
 
 def configure_logging():
     """

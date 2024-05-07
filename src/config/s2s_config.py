@@ -16,8 +16,7 @@ class CertificateFinder:
         self.certs_dir = certs_dir
 
     def get_first_matching_file(self, pattern: str) -> str:
-        files = glob.glob(f'{self.certs_dir}{pattern}')
-        if not files:
+        if not (files := glob.glob(f'{self.certs_dir}{pattern}')):
             raise FileNotFoundError(f"No files matching pattern {pattern} found in {self.certs_dir}")
         return files[0]
 
@@ -33,7 +32,7 @@ class EnvironmentConfigLoader:
 
         # split gnss_messages by commas
         gnss_messages = set(os.getenv("GNSS_MESSAGES", "").split(',')) if os.getenv("GNSS_MESSAGES") else set()
-        env_variables = {
+        return {
             "TARGET_EP": os.getenv("TARGET_EP", 'a2u4kg7tuli9al-ats.iot.us-east-1.amazonaws.com'),
             "THING_NAME": os.getenv("THING_NAME", 'blake_test_example'),
             "CERT_FILEPATH": os.getenv("CERT_FILEPATH", cert_filepath),
@@ -53,7 +52,6 @@ class EnvironmentConfigLoader:
             "PUBLISH_RAW_DATA": os.getenv("PUBLISH_RAW_DATA", False)
         }
 
-        return env_variables
 
 class AppConfig(BaseModel):
     target_ep: str = Field(..., alias="TARGET_EP")
@@ -77,8 +75,7 @@ class AppConfig(BaseModel):
     @classmethod
     def from_env(cls) -> "AppConfig":
         env_variables = EnvironmentConfigLoader.load_env_variables()
-        gnss_messages_env = env_variables.get("GNSS_MESSAGES")
-        if gnss_messages_env:
+        if gnss_messages_env := env_variables.get("GNSS_MESSAGES"):
             env_variables["GNSS_MESSAGES"] = set(gnss_messages_env.split(","))
         return cls(**env_variables)
     

@@ -57,8 +57,7 @@ class DeviceController:
         await self.serial_comm.disconnect()
 
     async def on_gnss_data_received(self, data):
-        message_type = data.get('message_type').lower().replace("_", "").replace("-", "")
-        if message_type:
+        if message_type := data.get('message_type').lower().replace("_", "").replace("-", ""):
             rule = f"$aws/rules/{message_type}_data_basic_ingest/{self.config.ts_domain_name}/{self.config.device_id}/{message_type}"
             logger.debug(f"sending gnss data to {rule}")
             await self.mqtt_comm.send(rule, data)
